@@ -2,15 +2,15 @@ from interpolation.lagrange import interpolate_using_lagrange
 from interpolation.cubic_spline import interpolate_using_cubic_spline
 from constants import *
 
-def interpolate(method:InterpolationMethod, interpolation_nodes_count:int, real_data_x:list, real_data_y:list, real_data_count:int) -> tuple[list, list]:
+def interpolate(method:InterpolationMethod, interpolation_nodes_count:int, real_data_x:list[float], real_data_y:list[float], real_data_count:int) -> tuple[list, list]:
     
-    def linspace(start, stop, count) -> list:
+    def _linspace(start:int, stop:int, count:int) -> list[float]:
         if count == 1: return [start]  
         step = (stop - start) / (count - 1)
         return [start + i * step for i in range(count)]
     
 
-    def select_evenly_spaced_nodes(real_data_x: list, real_data_y: list, count: int) -> tuple[list, list]:
+    def _select_evenly_spaced_nodes(real_data_x: list[float], real_data_y: list[float], count: int) -> tuple[list[float], list[float]]:
         
         if count <= 0: return [], []
 
@@ -27,17 +27,18 @@ def interpolate(method:InterpolationMethod, interpolation_nodes_count:int, real_
         return selected_x, selected_y
 
 
-    def scale(data) -> list:
+    def _scale(data) -> list[float]:
         return [(x - min(data)) / (max(data) - min(data)) for x in real_data_x]
     
+    
     # Uniformly select N nodes that will be used to interpolate other nodes with unknown Y-values
-    interpolation_nodes_x, interpolation_nodes_y = select_evenly_spaced_nodes(scale(real_data_x), real_data_y, interpolation_nodes_count)
+    interpolation_nodes_x, interpolation_nodes_y = _select_evenly_spaced_nodes(_scale(real_data_x), real_data_y, interpolation_nodes_count)
 
     # Uniformly select N nodes (specifically their indices) whose Y-values are unknown and will be calculated using interpolation
-    evaluation_points_x = linspace(LINSPACE_START, LINSPACE_STOP, real_data_count)
+    evaluation_points_x = _linspace(LINSPACE_START, LINSPACE_STOP, real_data_count)
     evaluation_points_y = []
 
-    # For each "unknown node" evaluate its value using interpolation 
+    # For each evaluated node find its value using interpolation 
     match method:
         case method.LAGRANGE:
             for x in evaluation_points_x:

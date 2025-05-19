@@ -1,19 +1,19 @@
-def lagrange_basis_polynomial(x, i, interpolation_nodes_count, interpolation_nodes_x):
+def interpolate_using_lagrange(x:float, interpolation_nodes_count:int, interpolation_nodes_x:list[float], interpolation_nodes_y:list[float]) -> float:
 
-    result = 1.0
+    def _lagrange_basis_polynomial(x:float, i:int, interpolation_nodes_count:int, interpolation_nodes_x:list[float]) -> float:
 
-    for j in range(interpolation_nodes_count):
-        if j == i: continue
-        result *= (x - interpolation_nodes_x[j]) / (interpolation_nodes_x[i] - interpolation_nodes_x[j])
+        result = 1.0
 
-    return result
+        for j in range(interpolation_nodes_count):
+            if j == i: continue
+            result *= (x - interpolation_nodes_x[j]) / (interpolation_nodes_x[i] - interpolation_nodes_x[j])
 
+        return result
 
-def interpolate_using_lagrange(x, interpolation_nodes_count, interpolation_nodes_x, interpolation_nodes_y):
 
     result = 0.0
 
     for sum_counter, interpolation_node_y in enumerate(interpolation_nodes_y):
-        result += interpolation_node_y * lagrange_basis_polynomial(x, sum_counter, interpolation_nodes_count, interpolation_nodes_x)
+        result += interpolation_node_y * _lagrange_basis_polynomial(x, sum_counter, interpolation_nodes_count, interpolation_nodes_x)
 
     return result

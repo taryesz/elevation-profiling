@@ -1,4 +1,4 @@
-def import_data() -> tuple[list, list, int]:
+def import_data() -> tuple[list[float], list[float], int]:
 
     x = []
     y = []

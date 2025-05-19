@@ -1,7 +1,7 @@
 from interpolation.interpolation import interpolate
 from data.data import import_data
 from plotting.plotting import plot
-from constants import *
+from constants import InterpolationMethod
 
 # Original data
 real_data_x, real_data_y, real_data_count = import_data()
