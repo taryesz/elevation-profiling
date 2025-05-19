@@ -1,15 +1,23 @@
 import matplotlib.pyplot as plt
 
-def plot(interpolated_data_x, interpolated_data_y, interpolation_nodes_count, real_data_x=None, real_data_y=None):
+from constants import *
+
+def plot(interpolated_data_x, interpolated_data_y, interpolation_nodes_count, real_data_x, real_data_y, method:InterpolationMethod):
     
     plt.figure(figsize=(12, 6))
     
-    if real_data_x is not None and real_data_y is not None: plt.plot(real_data_x, real_data_y, color='orange', label='Original Data')
+    plt.plot(real_data_x, real_data_y, color='orange', label='Original Data')
     
-    plt.plot(interpolated_data_x, interpolated_data_y, label='Lagrange Interpolation', color='blue')
+    match method:
+        case method.LAGRANGE:
+            description = "Lagrange"
+        case method.CUBIC_SPLINE:
+            description = "Cubic Spline"
+    
+    plt.plot(interpolated_data_x, interpolated_data_y, label=f'{description} Interpolation', color='blue')
 
     plt.yscale('log')
-    plt.title(f'Elevation Profile [Lagrange Interpolation, {interpolation_nodes_count} Interpolation Nodes]')
+    plt.title(f'Elevation Profile [{description} Interpolation, {interpolation_nodes_count} Interpolation Nodes]')
     plt.xlabel('Distance')
     plt.ylabel('Elevation [Logarithmic Scale]')
     plt.grid(True)

@@ -6,9 +6,16 @@ from constants import *
 # Original data
 real_data_x, real_data_y, real_data_count = import_data()
 
-# Interpolation
-interpolation_nodes_count = [6, 11, 16, 26, 52, 103]
+INTERPOLATION_NODES_COUNT = [6, 11, 16, 26, 52, 103]
 
-for current_interpolation_nodes_count in interpolation_nodes_count:
-    interpolated_data_x, interpolated_data_y = interpolate(InterpolationMethod.LAGRANGE, current_interpolation_nodes_count, real_data_x, real_data_y, real_data_count)
-    plot(interpolated_data_x, interpolated_data_y, current_interpolation_nodes_count, real_data_x, real_data_y)
+# Interpolation (Lagrange)
+
+for interpolation_nodes_count in INTERPOLATION_NODES_COUNT:
+    interpolated_data_x, interpolated_data_y = interpolate(InterpolationMethod.LAGRANGE, interpolation_nodes_count, real_data_x, real_data_y, real_data_count)
+    plot(interpolated_data_x, interpolated_data_y, interpolation_nodes_count, real_data_x, real_data_y, InterpolationMethod.LAGRANGE)
+
+# Interpolation (Cubic Spline)
+
+for interpolation_nodes_count in INTERPOLATION_NODES_COUNT:
+    interpolated_data_x, interpolated_data_y = interpolate(InterpolationMethod.CUBIC_SPLINE, interpolation_nodes_count, real_data_x, real_data_y, real_data_count)
+    plot(interpolated_data_x, interpolated_data_y, interpolation_nodes_count, real_data_x, real_data_y, InterpolationMethod.CUBIC_SPLINE)
