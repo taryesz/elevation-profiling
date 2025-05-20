@@ -2,3 +2,7 @@ venv
 __pycache__
 .DS_Store
 .vscode
+data/tczew_starogard.txt
+data/ulm_lugano.txt
+data/results/*
+raport

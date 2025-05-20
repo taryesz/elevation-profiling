@@ -56,7 +56,12 @@ def interpolate(method:InterpolationMethod, interpolation_nodes_distribution:Int
 
     def _scale(data) -> list[float]:
         return [(x - min(data)) / (max(data) - min(data)) for x in real_data_x]
-    
+ 
+
+    def _unscale(data) -> list[float]:
+        return [x * (max(real_data_x) - min(real_data_x)) + min(real_data_x) for x in data]
+
+
     match interpolation_nodes_distribution:
         case interpolation_nodes_distribution.UNIFORM:
             # Uniformly select N nodes that will be used to interpolate other nodes with unknown Y-values
@@ -72,56 +77,14 @@ def interpolate(method:InterpolationMethod, interpolation_nodes_distribution:Int
     # For each evaluated node find its value using interpolation 
     match method:
         case method.LAGRANGE:
-            
-            print(f"interpolation_nodes_count={interpolation_nodes_count}, len_x={len(interpolation_nodes_x)}, len_y={len(interpolation_nodes_y)}")
-            # assert interpolation_nodes_count == len(interpolation_nodes_x) == len(interpolation_nodes_y)
-
             for x in evaluation_points_x:
                 evaluation_points_y.append(interpolate_using_lagrange(x, interpolation_nodes_count, interpolation_nodes_x, interpolation_nodes_y))
         case method.CUBIC_SPLINE:
             for x in evaluation_points_x:
                 evaluation_points_y.append(interpolate_using_cubic_spline(x, interpolation_nodes_count, interpolation_nodes_x, interpolation_nodes_y))
 
-    # Scale the X-values back to the original scale
+    # Scale the X-values and the X-interpolation nodes back to the original scale
     evaluation_points_x = real_data_x
+    interpolation_nodes_x = _unscale(interpolation_nodes_x)
 
-    return evaluation_points_x, evaluation_points_y
-
-
-
-# def _select_chebyshev_nodes(real_data_x: list[float], real_data_y: list[float], count: int) -> tuple[list[float], list[float]]:
-        # if count <= 0: return [], []
-
-        # # Węzły Czebyszewa pierwszego rodzaju w przedziale [0, 1]
-        # chebyshev_nodes = [0.5 * (1 + cos((2 * k + 1) * pi / (2 * count))) for k in range(count)]
-        
-        # # Sortuj real_data_x i real_data_y razem, aby zachować zgodność
-        # sorted_data = sorted(zip(real_data_x, real_data_y), key=lambda pair: pair[0])
-        # sorted_x, sorted_y = zip(*sorted_data) if sorted_data else ([], [])
-        # sorted_x = list(sorted_x)
-        # sorted_y = list(sorted_y)
-
-        # selected_x = []
-        # selected_y = []
-        # used_indices = set()
-
-        # for node in chebyshev_nodes:
-        #     # Znajdź najbliższy punkt w sorted_x, który nie został jeszcze użyty
-        #     closest_index = min(
-        #         range(len(sorted_x)),
-        #         key=lambda i: abs(sorted_x[i] - node) if i not in used_indices else float('inf')
-        #     )
-        #     if closest_index not in used_indices:
-        #         selected_x.append(sorted_x[closest_index])
-        #         selected_y.append(sorted_y[closest_index])
-        #         used_indices.add(closest_index)
-        #     else:
-        #         # Jeśli wszystkie indeksy są już użyte, wybierz następny dostępny
-        #         for i in range(len(sorted_x)):
-        #             if i not in used_indices:
-        #                 selected_x.append(sorted_x[i])
-        #                 selected_y.append(sorted_y[i])
-        #                 used_indices.add(i)
-        #                 break
-
-        # return selected_x, selected_y
+    return evaluation_points_x, evaluation_points_y, interpolation_nodes_x, interpolation_nodes_y
